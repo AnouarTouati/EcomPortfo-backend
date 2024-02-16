@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cart;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class LoginController extends Controller
 {
@@ -18,7 +20,15 @@ class LoginController extends Controller
         'email'=>'string|required',
         'password'=>'string|required'
        ]);
+       //session id changes when we log in so we catch the cart before attempting to login
+       $cart = Cart::where('session_id',$request->session()->getId())->first();
+
        if(Auth::attempt($validated)){
+        if($cart){
+            $cart->user()->associate(Auth::user());
+            $cart->save();
+        }
+        
         return response(json_encode(Auth::user(),200))->withHeaders([
             'Content-Type'=>'application/json'
         ]);
@@ -28,4 +38,11 @@ class LoginController extends Controller
        }
     }
 
+    public function logout(){
+       
+        Auth::guard('web')->logout();
+        $cart =  Auth::user()->cart;
+        $cart->session_id = Session::getId();
+        $cart->save();
+    }
 }

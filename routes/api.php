@@ -24,7 +24,8 @@ Route::middleware('auth:sanctum')->get('/test',function (Request $request){
     return 'something';
 });
 
-
+Route::post('/cart/products',[CartController::class,'store']);
+Route::get('/cart/products',[CartController::class,'index']);
 
 Route::middleware('auth:sanctum')->group(function(){
 
@@ -33,7 +34,5 @@ Route::middleware('auth:sanctum')->group(function(){
             'Content-type'=>'application/json'
         ]);
     });
-    Route::post('/cart/products',[CartController::class,'store']);
-    Route::get('/cart/products',[CartController::class,'index']);
-    
+    Route::post('/logout',[LoginController::class,'logout']);
 });

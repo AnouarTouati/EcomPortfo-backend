@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class CartController extends Controller
@@ -13,10 +14,13 @@ class CartController extends Controller
      */
     public function index(Request $request)
     {
-        
-        $cart = Cart::where('session_id',$request->session()->getId())->first();
+        if(Auth::user()){
+            $cart = Cart::where('user_id',Auth::user()->id)->first();
+        }else {
+            $cart = Cart::where('session_id',$request->session()->getId())->first();
+        }
         if($cart == null){
-            return response('No products',200)->withHeaders([
+            return response(json_encode([]),200)->withHeaders([
                 'Content-type'=>'application/json'
             ]);
         }
@@ -42,11 +46,18 @@ class CartController extends Controller
         $validated = $request->validate([
             'product_id'=>'required|exists:products,id'
         ]);
-        $cart = Cart::where('session_id',$request->session()->getId())->first();
+        if(Auth::user()){
+            $cart = Cart::where('user_id',Auth::user()->id)->first();
+        }else{
+            $cart = Cart::where('session_id',$request->session()->getId())->first();
+        }
 
         if($cart == null){
             $cart = new Cart();
             $cart->session_id=$request->session()->getId();
+            if(Auth::user()){
+                $cart->user()->save(Auth::user());
+            }
             $cart->save();
            
         }
