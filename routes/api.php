@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,8 +26,13 @@ Route::middleware('auth:sanctum')->get('/test',function (Request $request){
     return 'something';
 });
 
+Route::get('/products',[ProductController::class,'index']);
+
+
 Route::post('/cart/products',[CartController::class,'store']);
 Route::get('/cart/products',[CartController::class,'index']);
+
+Route::post('/order',[OrderController::class,'store']);
 
 Route::middleware('auth:sanctum')->group(function(){
 

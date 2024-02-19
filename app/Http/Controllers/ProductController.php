@@ -12,7 +12,10 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
+        $products = Product::all();
+        return response(json_encode($products),200)->withHeaders([
+            'Content-type'=>'application/json'
+        ]);
     }
 
     /**
