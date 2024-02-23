@@ -114,6 +114,12 @@ class CartController extends Controller
             'Content-type' => 'application/json'
         ]);
     }
+    public function removeProduct($product_id){
+        $cart = CartController::getCurrentCart();
+        if($cart){
+            $cart->products()->detach($product_id);
+        }
+    }
     /**
      * Remove the specified resource from storage.
      */
