@@ -40,13 +40,6 @@ class CartController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -75,36 +68,52 @@ class CartController extends Controller
             $product = $cart->products()->find($validated['product_id']);
             $product->pivot->quantity += 1;
             $product->pivot->save();
-        }else{
+        } else {
             $cart->products()->attach($validated['product_id'], ['quantity' => '1']);
         }
         return response('', 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Cart $cart)
+    public function increase($product_id)
     {
-        //
+        $product_in_cart = $this->getProductFromCurrentCart($product_id);
+        $product_in_cart->pivot->quantity++;
+        $product_in_cart->pivot->save();
+        return response('ok', 200);
+    }
+    public function decrease($product_id)
+    {
+        $product_in_cart = $this->getProductFromCurrentCart($product_id);
+        if ($product_in_cart->pivot->quantity > 1) {
+            $product_in_cart->pivot->quantity--;
+            $product_in_cart->pivot->save();
+        }
+        return response('ok', 200);
+    }
+    private function getProductFromCurrentCart($product_id)
+    {
+        $cart = CartController::getCurrentCart();
+        if ($cart == null)
+            return response('cart empty', 200);
+        $product_in_cart = $cart->products()->find($product_id);
+        if (!$product_in_cart) {
+            return response('product not in cart');
+        }
+        return $product_in_cart;
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Cart $cart)
+    public function productsCount()
     {
-        //
+        $cart = CartController::getCurrentCart();
+        if ($cart) {
+            $count = $cart->products()->count();
+        } else {
+            $count = 0;
+        }
+        return response(json_encode(['count' => $count]), 200)->withHeaders([
+            'Content-type' => 'application/json'
+        ]);
     }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Cart $cart)
-    {
-        //
-    }
-
     /**
      * Remove the specified resource from storage.
      */

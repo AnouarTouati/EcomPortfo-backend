@@ -30,6 +30,9 @@ Route::get('/products',[ProductController::class,'index']);
 
 
 Route::post('/cart/products',[CartController::class,'store']);
+Route::get('/cart/products/count',[CartController::class,'productsCount']);
+Route::post('/cart/products/{product_id}/quantity/increase',[CartController::class,'increase']);
+Route::post('/cart/products/{product_id}/quantity/decrease',[CartController::class,'decrease']);
 Route::get('/cart/products',[CartController::class,'index']);
 
 Route::post('/order',[OrderController::class,'store']);
