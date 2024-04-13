@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -10,6 +11,9 @@ use Illuminate\Support\Facades\Session;
 
 class CartController extends Controller
 {
+    /**
+     * @return Cart
+     */
     public static function getCurrentCart()
     {
         $cart = null;
@@ -60,7 +64,7 @@ class CartController extends Controller
             $cart = new Cart();
             $cart->session_id = $request->session()->getId();
             if (Auth::user()) {
-                $cart->user()->save(Auth::user());
+                $cart->user()->associate(Auth::user());
             }
             $cart->save();
         }
@@ -106,7 +110,10 @@ class CartController extends Controller
     {
         $cart = CartController::getCurrentCart();
         if ($cart) {
-            $count = $cart->products()->count();
+            $count = 0;
+            foreach($cart->products as $product  ){
+                $count += $product->pivot->quantity;
+            }
         } else {
             $count = 0;
         }

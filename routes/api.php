@@ -5,6 +5,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -38,6 +39,10 @@ Route::get('/cart/products',[CartController::class,'index']);
 
 Route::post('/order',[OrderController::class,'store']);
 
+Route::post('/webhook',function(Request $request){
+    Log::debug('payment succeded');
+    Log::debug(json_decode($request->data));
+});
 Route::middleware('auth:sanctum')->group(function(){
 
     Route::get('/session',function(Request $request){
