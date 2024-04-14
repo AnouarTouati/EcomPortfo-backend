@@ -52,3 +52,16 @@ Route::middleware('auth:sanctum')->group(function(){
     });
     Route::post('/logout',[LoginController::class,'logout']);
 });
+
+Route::post('/checkout', function (Request $request) {
+    $stripePriceId = 'price_1OoSbFCXHUVQhaJLgyiVmcVL';
+ 
+    $quantity = 1;
+    Auth::attempt(['email'=>'test@example.com','password'=>'password']);
+    $data = Auth::user()->checkout([$stripePriceId => $quantity], [
+        'success_url' => "http://localhost:5173/payment/success",
+        'cancel_url' =>"http://localhost:5173/payment/failed"
+    ])->toJson();
+
+    return response($data,200)->withHeaders(['Content-Type'=>'application/json']);
+})->name('checkout');
