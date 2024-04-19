@@ -22,6 +22,6 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
             'password'=> Hash::make('password')
         ]);
-        Product::factory()->count(10)->create();
+        Product::factory()->count(12)->create();
     }
 }

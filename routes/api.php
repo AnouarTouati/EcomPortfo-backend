@@ -37,7 +37,8 @@ Route::post('/cart/products/{product_id}/quantity/increase',[CartController::cla
 Route::post('/cart/products/{product_id}/quantity/decrease',[CartController::class,'decrease']);
 Route::get('/cart/products',[CartController::class,'index']);
 
-Route::post('/order',[OrderController::class,'store']);
+Route::post('/orders',[OrderController::class,'store']);
+Route::get('/orders/{stripe_session_id}',[OrderController::class,'show']);
 
 Route::post('/webhook',function(Request $request){
     Log::debug('payment succeded');
@@ -52,16 +53,3 @@ Route::middleware('auth:sanctum')->group(function(){
     });
     Route::post('/logout',[LoginController::class,'logout']);
 });
-
-Route::post('/checkout', function (Request $request) {
-    $stripePriceId = 'price_1OoSbFCXHUVQhaJLgyiVmcVL';
- 
-    $quantity = 1;
-    Auth::attempt(['email'=>'test@example.com','password'=>'password']);
-    $data = Auth::user()->checkout([$stripePriceId => $quantity], [
-        'success_url' => "http://localhost:5173/payment/success",
-        'cancel_url' =>"http://localhost:5173/payment/failed"
-    ])->toJson();
-
-    return response($data,200)->withHeaders(['Content-Type'=>'application/json']);
-})->name('checkout');

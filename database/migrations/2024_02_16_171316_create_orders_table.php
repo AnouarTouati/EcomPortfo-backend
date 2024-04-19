@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('email');
             $table->tinyInteger('status',false,true);
             $table->decimal('total',8,2);
+            $table->string("stripe_session_id")->nullable();
             $table->timestamps();
         });
     }

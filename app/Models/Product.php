@@ -8,8 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     use HasFactory;
-    
-    public function carts(){
-       return $this->belongsToMany(Cart::class);
+    protected $hidden = ['updated_at'];
+
+    public function carts()
+    {
+        return $this->belongsToMany(Cart::class);
     }
 }

@@ -3,16 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Rules\OrderBy;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::all();
+        $request->validate([
+            'rowsPerPage'=>'numeric|integer',
+            'order'=>'in:asc,desc',
+            'orderBy'=>[new OrderBy('products')]
+        ]);
+        $products = Product::orderBy($request->input('orderBy','id'),$request->order)->paginate($request->rowsPerPage);
+        
         return response(json_encode($products),200)->withHeaders([
             'Content-type'=>'application/json'
         ]);
