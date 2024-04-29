@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\OrderController;
@@ -19,38 +20,42 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+/**
+ * Public Routes
+ */
+Route::post('login', [LoginController::class, 'login']);
+
+Route::get('/products', [ProductController::class, 'index']);
+
+Route::group(['prefix' => 'cart'], function () {
+    Route::post('products', [CartController::class, 'store']);
+    Route::get('products/count', [CartController::class, 'productsCount']);
+    Route::delete('products/{product_id}', [CartController::class, 'removeProduct']);
+    Route::post('products/{product_id}/quantity/increase', [CartController::class, 'increase']);
+    Route::post('products/{product_id}/quantity/decrease', [CartController::class, 'decrease']);
+    Route::get('products', [CartController::class, 'index']);
 });
-Route::post('login',[LoginController::class,'login']);
-Route::middleware('auth:sanctum')->get('/test',function (Request $request){
-    return 'something';
-});
 
-Route::get('/products',[ProductController::class,'index']);
-Route::delete('/products/{product}',[ProductController::class,'destroy']);
+Route::post('/orders', [OrderController::class, 'store']);
+Route::get('/orders/{stripe_session_id}', [OrderController::class, 'show']);
 
-
-Route::post('/cart/products',[CartController::class,'store']);
-Route::get('/cart/products/count',[CartController::class,'productsCount']);
-Route::delete('/cart/products/{product_id}',[CartController::class,'removeProduct']);
-Route::post('/cart/products/{product_id}/quantity/increase',[CartController::class,'increase']);
-Route::post('/cart/products/{product_id}/quantity/decrease',[CartController::class,'decrease']);
-Route::get('/cart/products',[CartController::class,'index']);
-
-Route::post('/orders',[OrderController::class,'store']);
-Route::get('/orders/{stripe_session_id}',[OrderController::class,'show']);
-
-Route::post('/webhook',function(Request $request){
+Route::post('/webhook', function (Request $request) {
     Log::debug('payment succeded');
     Log::debug(json_decode($request->data));
 });
-Route::middleware('auth:sanctum')->group(function(){
 
-    Route::get('/session',function(Request $request){
-        return response(json_encode($request->session()->getId()),200)->withHeaders([
-            'Content-type'=>'application/json'
-        ]);
-    });
-    Route::post('/logout',[LoginController::class,'logout']);
+/**
+ * Member Routes
+ */
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [LoginController::class, 'logout']);
+});
+
+/**
+ * Admin Routes
+ */
+Route::group(['prefix' => 'admin'], function () {
+    Route::get('/products', [AdminProductController::class, 'index']);
+    Route::post('/products', [AdminProductController::class, 'store']);
+    Route::delete('/products/{product}', [AdminProductController::class, 'destroy']);
 });

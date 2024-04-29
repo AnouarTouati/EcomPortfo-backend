@@ -16,12 +16,8 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $request->validate([
-            'rowsPerPage'=>'numeric|integer',
-            'order'=>'in:asc,desc',
-            'orderBy'=>[new OrderBy('products')]
-        ]);
-        $products = Product::orderBy($request->input('orderBy','id'),$request->order)->paginate($request->rowsPerPage);
+    
+        $products = Product::all();
         
         return response(json_encode($products),200)->withHeaders([
             'Content-type'=>'application/json'
@@ -73,11 +69,6 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        try{
-            $product->delete();
-            return response('',200);
-        }catch(Exception $e){
-            return response('',500);
-        }
+    
     }
 }
