@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\Product;
+use App\Rules\OrderBy;
 use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
+use JsonSerializable;
 
 enum  Status: int
 {
@@ -21,9 +24,17 @@ class OrderController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $request->validate([
+            'rowsPerPage'=>'numeric|integer',
+            'order'=>'in:asc,desc',
+            'orderBy'=>[new OrderBy('orders')]
+        ]);
+        $orders = Order::orderBy($request->input('orderBy','id'),$request->order)->paginate($request->rowsPerPage);
+        return response(json_encode($orders),200)->withHeaders([
+            'Content-Type'=>'application/json'
+        ]);
     }
 
     /**
@@ -92,9 +103,17 @@ class OrderController extends Controller
         if ($order->status == Status::paid) {
             return response('not found', 404)->withHeaders(['Content-Type'=>'application/json']);
         }
-
+        //this is a is done just in case the user is redirect here before the stripe webhook arrives
         $order->status = Status::paid;
         $order->save();
+        return response(json_encode($order), 200)->withHeaders(['Content-Type' => 'application/json']);
+    }
+
+    public function adminShow(Order $order)
+    {
+
+        $order->load('products');
+    
         return response(json_encode($order), 200)->withHeaders(['Content-Type' => 'application/json']);
     }
 

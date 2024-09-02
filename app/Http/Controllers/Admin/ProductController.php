@@ -29,7 +29,7 @@ class ProductController extends Controller
     {
          $request->validate([
             'stripeId'=>'required|string|size:30',
-            'name'=>'required|string|max:255',
+            'name'=>'required|string|min:3|max:255',
             'description'=>'required|string|max:255',
             'price'=>'required|numeric',
         ]);

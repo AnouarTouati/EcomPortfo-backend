@@ -39,6 +39,7 @@ Route::group(['prefix' => 'cart'], function () {
 Route::post('/orders', [OrderController::class, 'store']);
 Route::get('/orders/{stripe_session_id}', [OrderController::class, 'show']);
 
+
 Route::post('/webhook', function (Request $request) {
     Log::debug('payment succeded');
     Log::debug(json_decode($request->data));
@@ -58,4 +59,6 @@ Route::group(['prefix' => 'admin'], function () {
     Route::get('/products', [AdminProductController::class, 'index']);
     Route::post('/products', [AdminProductController::class, 'store']);
     Route::delete('/products/{product}', [AdminProductController::class, 'destroy']);
+    Route::get('/orders', [OrderController::class, 'index']);
+    Route::get('/orders/{order}', [OrderController::class, 'adminShow']);
 });

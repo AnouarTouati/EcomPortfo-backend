@@ -13,7 +13,7 @@ class Order extends Model
         'status'=>Status::class
     ];
     public function products(){
-        return $this->belongsToMany(Product::class)->withPivot(['quantity','price_at_selling_time','selling_price','coupon_code_used']);;
+        return $this->belongsToMany(Product::class)->withPivot(['quantity','price_at_selling_time','coupon_code_used']);;
     }
     public function user(){
         return $this->belongsTo(User::class);
