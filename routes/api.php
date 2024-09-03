@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\LoginController;
@@ -60,5 +61,5 @@ Route::group(['prefix' => 'admin'], function () {
     Route::post('/products', [AdminProductController::class, 'store']);
     Route::delete('/products/{product}', [AdminProductController::class, 'destroy']);
     Route::get('/orders', [OrderController::class, 'index']);
-    Route::get('/orders/{order}', [OrderController::class, 'adminShow']);
+    Route::get('/orders/{order}', [AdminOrderController::class, 'show']);
 });

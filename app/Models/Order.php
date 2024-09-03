@@ -2,9 +2,13 @@
 
 namespace App\Models;
 
-use App\Http\Controllers\Status;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+enum  Status: int
+{
+    case unpaid = 0;
+    case paid = 1;
+}
 
 class Order extends Model
 {

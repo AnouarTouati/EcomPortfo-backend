@@ -10,12 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use JsonSerializable;
-
-enum  Status: int
-{
-    case unpaid = 0;
-    case paid = 1;
-}
+use App\Models\Status;
 
 class OrderController extends Controller
 {
@@ -26,13 +21,8 @@ class OrderController extends Controller
      */
     public function index(Request $request)
     {
-        $request->validate([
-            'rowsPerPage'=>'numeric|integer',
-            'order'=>'in:asc,desc',
-            'orderBy'=>[new OrderBy('orders')]
-        ]);
-        $orders = Order::orderBy($request->input('orderBy','id'),$request->order)->paginate($request->rowsPerPage);
-        return response(json_encode($orders),200)->withHeaders([
+       
+        return response("Client list of orders should be here",200)->withHeaders([
             'Content-Type'=>'application/json'
         ]);
     }
@@ -106,14 +96,6 @@ class OrderController extends Controller
         //this is a is done just in case the user is redirect here before the stripe webhook arrives
         $order->status = Status::paid;
         $order->save();
-        return response(json_encode($order), 200)->withHeaders(['Content-Type' => 'application/json']);
-    }
-
-    public function adminShow(Order $order)
-    {
-
-        $order->load('products');
-    
         return response(json_encode($order), 200)->withHeaders(['Content-Type' => 'application/json']);
     }
 
