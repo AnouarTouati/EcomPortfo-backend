@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\Schema;
 
-class OrderBy implements ValidationRule
+class OrderByColumnExists implements ValidationRule
 {
     private $tableName='';
     /**

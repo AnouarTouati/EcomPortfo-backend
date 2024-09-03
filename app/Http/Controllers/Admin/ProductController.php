@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
-use App\Rules\OrderBy;
+use App\Rules\OrderByColumnExists;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -16,7 +16,7 @@ class ProductController extends Controller
         $request->validate([
             'rowsPerPage'=>'numeric|integer',
             'order'=>'in:asc,desc',
-            'orderBy'=>[new OrderBy('products')]
+            'orderBy'=>[new OrderByColumnExists('products')]
         ]);
         $products = Product::orderBy($request->input('orderBy','id'),$request->order)->paginate($request->rowsPerPage);
         

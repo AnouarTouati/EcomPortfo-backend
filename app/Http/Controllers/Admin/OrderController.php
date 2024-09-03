@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
-use App\Rules\OrderBy;
+use App\Rules\OrderByColumnExists;
 use Illuminate\Http\Request;
 
 
@@ -19,7 +19,7 @@ class OrderController extends Controller
         $request->validate([
             'rowsPerPage'=>'numeric|integer',
             'order'=>'in:asc,desc',
-            'orderBy'=>[new OrderBy('orders')]
+            'orderBy'=>[new OrderByColumnExists('orders')]
         ]);
         $orders = Order::orderBy($request->input('orderBy','id'),$request->order)->paginate($request->rowsPerPage);
         return response(json_encode($orders),200)->withHeaders([
