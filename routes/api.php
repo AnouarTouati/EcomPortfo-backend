@@ -60,6 +60,6 @@ Route::group(['prefix' => 'admin'], function () {
     Route::get('/products', [AdminProductController::class, 'index']);
     Route::post('/products', [AdminProductController::class, 'store']);
     Route::delete('/products/{product}', [AdminProductController::class, 'destroy']);
-    Route::get('/orders', [OrderController::class, 'index']);
+    Route::get('/orders', [AdminOrderController::class, 'index']);
     Route::get('/orders/{order}', [AdminOrderController::class, 'show']);
 });
