@@ -43,20 +43,22 @@ Route::get('/orders/{stripe_session_id}', [OrderController::class, 'show']);
 
 Route::post('/webhook', function (Request $request) {
     Log::debug('payment succeded');
-    Log::debug(json_decode($request->data));
+    Log::debug($request->data);
+    return response('',200);
 });
 
 /**
  * Member Routes
  */
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/user',[LoginController::class,'getLoggedInUser']);
     Route::post('/logout', [LoginController::class, 'logout']);
 });
 
 /**
  * Admin Routes
  */
-Route::group(['prefix' => 'admin'], function () {
+Route::middleware(['auth:sanctum'])->prefix('admin')->group(function () {
     Route::get('/products', [AdminProductController::class, 'index']);
     Route::post('/products', [AdminProductController::class, 'store']);
     Route::delete('/products/{product}', [AdminProductController::class, 'destroy']);

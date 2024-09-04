@@ -16,9 +16,14 @@ class LoginController extends Controller
      */
     public function login(Request $request)
     {
+        if(Auth::user()){
+            return response(json_encode(Auth::user(),200))->withHeaders([
+                'Content-Type'=>'application/json'
+            ]);
+        }
        $validated = $request->validate([
         'email'=>'string|required',
-        'password'=>'string|required'
+        'password'=>'string|required|min:6'
        ]);
        //session id changes when we log in so we catch the cart before attempting to login
        $cart = Cart::where('session_id',$request->session()->getId())->first();
@@ -42,7 +47,10 @@ class LoginController extends Controller
        
         Auth::guard('web')->logout();
         $cart =  Auth::user()->cart;
-        $cart->session_id = Session::getId();
-        $cart->save();
+        if($cart){
+            $cart->session_id = Session::getId();
+            $cart->save();
+        }
+        
     }
 }
