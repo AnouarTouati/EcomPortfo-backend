@@ -23,12 +23,12 @@ class LoginController extends Controller
         }
        $validated = $request->validate([
         'email'=>'string|required',
-        'password'=>'string|required|min:6'
+        'password'=>'string|required|min:6',
        ]);
        //session id changes when we log in so we catch the cart before attempting to login
        $cart = Cart::where('session_id',$request->session()->getId())->first();
 
-       if(Auth::attempt($validated)){
+       if(Auth::attempt($validated,$request->remeber_me ?? false)){
         if($cart){
             $cart->user()->associate(Auth::user());
             $cart->save();
