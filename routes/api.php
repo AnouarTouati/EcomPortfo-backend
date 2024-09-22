@@ -25,7 +25,7 @@ use Illuminate\Support\Facades\Route;
  * Public Routes
  */
 Route::post('login', [LoginController::class, 'login']);
-
+Route::get('/user',[LoginController::class,'login']);
 Route::get('/products', [ProductController::class, 'index']);
 
 Route::group(['prefix' => 'cart'], function () {
@@ -51,7 +51,7 @@ Route::post('/webhook', function (Request $request) {
  * Member Routes
  */
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::get('/user',[LoginController::class,'getLoggedInUser']);
+    
     Route::post('/logout', [LoginController::class, 'logout']);
 });
 
