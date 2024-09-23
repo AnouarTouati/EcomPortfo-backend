@@ -6,6 +6,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\SignUpController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
@@ -24,8 +25,10 @@ use Illuminate\Support\Facades\Route;
 /**
  * Public Routes
  */
+
 Route::post('login', [LoginController::class, 'login']);
-Route::get('/user',[LoginController::class,'login']);
+Route::get('/user', [LoginController::class, 'login']);
+Route::post('/sign-up', [SignUpController::class, 'signUp']);
 Route::get('/products', [ProductController::class, 'index']);
 
 Route::group(['prefix' => 'cart'], function () {
@@ -44,14 +47,14 @@ Route::get('/orders/{stripe_session_id}', [OrderController::class, 'show']);
 Route::post('/webhook', function (Request $request) {
     Log::debug('payment succeded');
     Log::debug($request->data);
-    return response('',200);
+    return response('', 200);
 });
 
 /**
  * Member Routes
  */
 Route::middleware(['auth:sanctum'])->group(function () {
-    
+
     Route::post('/logout', [LoginController::class, 'logout']);
 });
 

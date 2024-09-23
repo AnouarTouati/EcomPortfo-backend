@@ -16,41 +16,40 @@ class LoginController extends Controller
      */
     public function login(Request $request)
     {
-        if(Auth::user()){
-            return response(json_encode(Auth::user(),200))->withHeaders([
-                'Content-Type'=>'application/json'
+        if (Auth::user()) {
+            return response(json_encode(Auth::user()), 200)->withHeaders([
+                'Content-Type' => 'application/json'
             ]);
         }
-       $validated = $request->validate([
-        'email'=>'string|required',
-        'password'=>'string|required|min:6',
-       ]);
-       //session id changes when we log in so we catch the cart before attempting to login
-       $cart = Cart::where('session_id',$request->session()->getId())->first();
-
-       if(Auth::attempt($validated,$request->remeber_me ?? false)){
-        if($cart){
-            $cart->user()->associate(Auth::user());
-            $cart->save();
-        }
-        
-        return response(json_encode(Auth::user(),200))->withHeaders([
-            'Content-Type'=>'application/json'
+        $validated = $request->validate([
+            'email' => 'string|required',
+            'password' => 'string|required|min:6',
         ]);
-       }
-       else {
-        return response('failed to login',400);
-       }
+        //session id changes when we log in so we catch the cart before attempting to login
+        $cart = Cart::where('session_id', $request->session()->getId())->first();
+
+        if (Auth::attempt($validated, $request->remeber_me ?? false)) {
+            if ($cart) {
+                $cart->user()->associate(Auth::user());
+                $cart->save();
+            }
+
+            return response(json_encode(Auth::user(), 200))->withHeaders([
+                'Content-Type' => 'application/json'
+            ]);
+        } else {
+            return response('failed to login', 400);
+        }
     }
 
-    public function logout(){
-       
+    public function logout()
+    {
+
         Auth::guard('web')->logout();
         $cart =  Auth::user()->cart;
-        if($cart){
+        if ($cart) {
             $cart->session_id = Session::getId();
             $cart->save();
         }
-        
     }
 }
