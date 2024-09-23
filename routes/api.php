@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\OrderController;
@@ -30,6 +31,10 @@ Route::post('login', [LoginController::class, 'login']);
 Route::get('/user', [LoginController::class, 'login']);
 Route::post('/sign-up', [SignUpController::class, 'signUp']);
 Route::get('/products', [ProductController::class, 'index']);
+
+Route::get('/verify-email/{id}/{hash}', VerifyEmailController::class)
+    ->middleware(['auth', 'signed', 'throttle:6,1'])
+    ->name('verification.verify');
 
 Route::group(['prefix' => 'cart'], function () {
     Route::post('products', [CartController::class, 'store']);

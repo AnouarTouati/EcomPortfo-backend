@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Exception;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -28,7 +29,7 @@ class SignUpController extends Controller
             $user->save();
             DB::commit();
             Auth::attempt(["email" => $validated["email"], "password" => $validated["password"]]);
-
+            event(new Registered(Auth::user()));
             return response(json_encode(Auth::user()), 201)->withHeaders(["Content-Type" => "application/json"]);
         } catch (Exception $e) {
             DB::rollBack();
