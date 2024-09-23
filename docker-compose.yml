@@ -55,6 +55,18 @@ services:
                 - '-p${DB_PASSWORD}'
             retries: 3
             timeout: 5s
+    phpmyadmin:
+            depends_on:
+                 - mysql
+            image: phpmyadmin
+            restart: always
+            ports:
+                  - "8090:80"
+            environment:
+                PMA_HOST: mysql
+            networks:
+                - sail
+                 
 networks:
     sail:
         driver: bridge
