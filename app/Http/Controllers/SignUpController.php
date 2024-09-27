@@ -15,9 +15,9 @@ class SignUpController extends Controller
     public function signUp(Request $request)
     {
         $validated = $request->validate([
-            "name" => "string|min:3",
-            'email' => 'email|unique:users,email',
-            "password" => "string|min:8"
+            "name" => "required|string|min:3",
+            'email' => 'required|email|unique:users,email',
+            "password" => "required|string|min:8"
         ]);
         DB::beginTransaction();
         try {

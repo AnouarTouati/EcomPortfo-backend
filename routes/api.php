@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Auth\NewPasswordController;
+use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\LoginController;
@@ -35,6 +37,14 @@ Route::get('/products', [ProductController::class, 'index']);
 Route::get('/verify-email/{id}/{hash}', VerifyEmailController::class)
     ->middleware(['auth', 'signed', 'throttle:6,1'])
     ->name('verification.verify');
+
+Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])
+    ->middleware('guest')
+    ->name('password.email');
+
+Route::post('/password-reset', [NewPasswordController::class, 'store'])
+    ->middleware('guest')
+    ->name('password.store');
 
 Route::group(['prefix' => 'cart'], function () {
     Route::post('products', [CartController::class, 'store']);
