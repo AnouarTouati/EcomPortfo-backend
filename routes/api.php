@@ -76,7 +76,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 /**
  * Admin Routes
  */
-Route::middleware(['auth:sanctum'])->prefix('admin')->group(function () {
+Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(function () {
     Route::get('/products', [AdminProductController::class, 'index']);
     Route::post('/products', [AdminProductController::class, 'store']);
     Route::delete('/products/{product}', [AdminProductController::class, 'destroy']);

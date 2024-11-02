@@ -4,27 +4,32 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\User;
 use App\Rules\OrderByColumnExists;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
-    
+
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        $request->validate([
-            'rowsPerPage'=>'numeric|integer',
-            'order'=>'in:asc,desc',
-            'orderBy'=>[new OrderByColumnExists('orders')]
-        ]);
-        $orders = Order::orderBy($request->input('orderBy','id'),$request->order)->paginate($request->rowsPerPage);
-        return response(json_encode($orders),200)->withHeaders([
-            'Content-Type'=>'application/json'
-        ]);
+        $user = Auth::user();
+        if ($user) {
+            if ($user->hasPermissionTo('view orders')) {
+                $request->validate([
+                    'rowsPerPage' => 'numeric|integer',
+                    'order' => 'in:asc,desc',
+                    'orderBy' => [new OrderByColumnExists('orders')]
+                ]);
+                $orders = Order::orderBy($request->input('orderBy', 'id'), $request->order)->paginate($request->rowsPerPage);
+                return response()->json($orders);
+            }
+        }
+        return response()->json('', 403);
     }
 
     /**
@@ -40,9 +45,15 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
-        $order->load('products');
-    
-        return response(json_encode($order), 200)->withHeaders(['Content-Type' => 'application/json']);
+        $user = Auth::user();
+        if ($user) {
+            if ($user->hasPermissionTo('view orders')) {
+                $order->load('products');
+
+                return response()->json($order);
+            }
+        }
+        return response()->json('', 403);
     }
 
     /**

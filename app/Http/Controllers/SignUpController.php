@@ -27,6 +27,8 @@ class SignUpController extends Controller
             $user->password = Hash::make($validated['password']);
 
             $user->save();
+            $user->assignRole('customer');
+            $user->save();
             DB::commit();
             Auth::attempt(["email" => $validated["email"], "password" => $validated["password"]]);
             event(new Registered(Auth::user()));
