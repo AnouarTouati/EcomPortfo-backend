@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cart;
 use App\Models\User;
 use Exception;
 use Illuminate\Auth\Events\Registered;
@@ -30,7 +31,14 @@ class SignUpController extends Controller
             $user->assignRole('customer');
             $user->save();
             DB::commit();
-            Auth::attempt(["email" => $validated["email"], "password" => $validated["password"]]);
+            //session id changes when we log in so we catch the cart before attempting to login
+            $cart = Cart::where('session_id', $request->session()->getId())->first();
+            if (Auth::attempt(["email" => $validated["email"], "password" => $validated["password"]])) {
+                    $cart->session_id = null;
+                    $cart->user()->associate(Auth::user());
+                    $cart->save();
+                }
+            }
             event(new Registered(Auth::user()));
             return response(json_encode(Auth::user()), 201)->withHeaders(["Content-Type" => "application/json"]);
         } catch (Exception $e) {

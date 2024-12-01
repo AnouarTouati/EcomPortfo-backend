@@ -46,7 +46,7 @@ Route::post('/password-reset', [NewPasswordController::class, 'store'])
     ->middleware('guest')
     ->name('password.store');
 
-Route::group(['prefix' => 'cart'], function () {
+Route::prefix('cart')->group(function () {
     Route::post('products', [CartController::class, 'store']);
     Route::get('products/count', [CartController::class, 'productsCount']);
     Route::delete('products/{product_id}', [CartController::class, 'removeProduct']);
